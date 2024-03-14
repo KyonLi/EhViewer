@@ -60,10 +60,10 @@ android {
 
     defaultConfig {
         applicationId = "moe.tarsin.ehviewer"
-        minSdk = 28
+        minSdk = 23
         targetSdk = 34
-        versionCode = 180051
-        versionName = "1.11.0"
+        versionCode = 180052
+        versionName = "1.11.1"
         resourceConfigurations.addAll(
             listOf(
                 "zh",
@@ -87,34 +87,14 @@ android {
         }
     }
 
-    flavorDimensions += listOf("api", "oss")
-
-    productFlavors {
-        create("default") {
-            dimension = "api"
-        }
-        create("marshmallow") {
-            dimension = "api"
-            minSdk = 23
-            applicationIdSuffix = ".m"
-            versionNameSuffix = "-M"
-            compileOptions {
-                isCoreLibraryDesugaringEnabled = true
-            }
-        }
-        create("oss") {
-            dimension = "oss"
-        }
-        create("gms") {
-            dimension = "oss"
-            versionNameSuffix = "-gms"
-        }
-    }
-
     externalNativeBuild {
         cmake {
             path = File("src/main/cpp/CMakeLists.txt")
         }
+    }
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -151,9 +131,11 @@ android {
     }
 
     packaging {
+        dex {
+            useLegacyPackaging = false
+        }
         resources {
             excludes += "/META-INF/**"
-            excludes += "/okhttp3/**"
             excludes += "/kotlin/**"
             excludes += "**.txt"
             excludes += "**.bin"
@@ -230,10 +212,6 @@ dependencies {
 
     implementation(libs.bundles.splitties)
 
-    // https://square.github.io/okhttp/changelogs/changelog/
-    implementation(platform(libs.okhttp.bom))
-    implementation(libs.bundles.okhttp)
-
     implementation(libs.okio.jvm)
 
     implementation(libs.logcat)
@@ -257,7 +235,7 @@ dependencies {
 
     implementation(libs.telephoto.zoomable)
 
-    implementation(libs.bundles.ktor)
+    implementation(libs.ktor.client.core)
 
     implementation(libs.bundles.kotlinx.serialization)
 
@@ -267,7 +245,10 @@ dependencies {
 
     coreLibraryDesugaring(libs.desugar)
 
-    "gmsImplementation"(libs.bundles.cronet)
+    implementation(libs.cronet.embedded)
+
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
 }
 
 kotlin {
