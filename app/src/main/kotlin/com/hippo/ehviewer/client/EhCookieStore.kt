@@ -51,6 +51,12 @@ object EhCookieStore : CookiesStorage {
         )
     }
 
+    fun addCookie(k: String, v: String, domain: String) {
+        val cookie = Cookie(name = k, value = v, domain = domain, maxAge = Int.MAX_VALUE)
+        val url = if (EhUrl.DOMAIN_E == cookie.domain) EhUrl.HOST_E else EhUrl.HOST_EX
+        manager.setCookie(url, renderSetCookieHeader(cookie))
+    }
+
     fun flush() = manager.flush()
 
     fun getCookieHeader(url: String): String {
